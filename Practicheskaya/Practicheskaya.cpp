@@ -1,4 +1,4 @@
-﻿#include <iostream>
+#include <iostream>
 #include <iomanip>
 #include <stdlib.h>
 #include <conio.h>
@@ -28,23 +28,47 @@ void ex2() {
     const int size_of_input = sizeof(input) * 8;
     int mask = 1 << size_of_input - 2;
 
+    bool staying_bits[size_of_input];
+    cout << "Вводите на каждой новой строке номера битов, которые хотели бы оставить неизменными(от 1 до 32, нумерация с конца).\nКогда введёте все биты введите число - 100 для продолжения" << endl;
+    int i;
+    do {
+        cin >> i;
+        staying_bits[i-1] = 1;
+    } while (i !=- 100);
 
     cout << "100% правильный ответ (для сравнения с ответом алгоритма)" << endl << bitset<size_of_input>(input) << endl << endl;
     cout << "\x1b[31mКрасный\x1b[0m - знаковый бит\n" << "\x1b[32mЗеёлный\x1b[0m - двоичный код числа\n";
 
     if (input < 0) {
-        cout << "\x1b[31m1 \x1b[0m";
-        input =- input;
+        if (staying_bits[size_of_input - 1] == 1) {
+            cout << "\x1b[31m0 \x1b[0m";
+            input = -input;
+        }
+        else {
+            cout << "\x1b[31m1 \x1b[0m";
+            input = -input;
+        }
+        
     } else {
-        cout << "\x1b[31m0 \x1b[0m";
+        if (staying_bits[size_of_input - 1] == 1) {
+            cout << "\x1b[31m1 \x1b[0m";
+        }
+        else {
+            cout << "\x1b[31m0 \x1b[0m";
+        }
     }
 
 
-    for (int i = 1; i < size_of_input ; i++) {
+    for (int i = size_of_input - 2; i > 0; i--) {
         if (i % 8 == 0) {
             cout << " ";
         }
-        cout << "\x1b[32m" << (input & mask ? '1' : '0') << "\x1b[0m";
+        if (staying_bits[i] == 1) {
+            cout << "\x1b[32m" << (not(input & mask) ? '1' : '0') << "\x1b[0m";
+        }
+        else {
+            cout << "\x1b[32m" << (input & mask ? '1' : '0') << "\x1b[0m";
+        }
         input <<= 1;
     }
 }
